@@ -10,7 +10,7 @@ environment {
 }
 
     stages {
-        stage("build"){
+        stage("build") {
             steps {
                 echo "----------- build started ----------"
                 sh 'mvn clean deploy -Dmaven.test.skip=true'
@@ -28,7 +28,7 @@ environment {
         }
 
 
-        stage("SonarQube analysis"){
+        stage("SonarQube analysis") {
             environment{
                 scannerHome= tool 'valaxy-sonar-scanner'
             }
@@ -37,7 +37,20 @@ environment {
                     sh "${scannerHome}/bin/sonar-scanner"
                 }
             }
+        }  
 
-        }    
+        stage("Quality Gate") {
+            steps {
+                script {
+                    timeout(time:1,unit:HOURS) {
+                        def qg=waitForQualityGate()
+                        if (qg.status!='OK'){
+                            error "Pipeline aborted due to quality gate failure:${qg.status}"
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }
