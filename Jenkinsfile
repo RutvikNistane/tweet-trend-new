@@ -9,9 +9,9 @@ pipeline {
         }
     }
 
-environment {
-    PATH = "/opt/apache-maven-3.9.8/bin:$PATH"
-}
+    environment {
+        PATH = "/opt/apache-maven-3.9.8/bin:$PATH"
+    }
 
     stages {
         stage("build") {
@@ -97,7 +97,7 @@ environment {
             }
         }
 
-        stage("Docker Publish")
+        stage("Docker Publish") {
             steps {
                 script {
                     echo '<-------------Docker Publish Started--------------->'
