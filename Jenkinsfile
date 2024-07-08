@@ -1,3 +1,5 @@
+def registry =  https://rutviknistane123.jfrog.io/
+
 pipeline {
     agent {
         node {
@@ -27,7 +29,7 @@ environment {
             }
         }
 
-
+/*
         stage('SonarQube analysis') {
             environment{
                 scannerHome = tool 'valaxy-sonar-scanner'
@@ -38,6 +40,8 @@ environment {
                 }
             }
         }  
+
+*/
 
         stage("Quality Gate") {
             steps {
@@ -51,6 +55,34 @@ environment {
                 }
             }
         }
+
+        stage("Jar Publish") {
+            steps {
+                script {
+                        echo '<--------------- Jar Publish Started --------------->'
+                        def server = Artifactory.newServer url:registry+"/artifactory" ,  credentialsId:"artfiact-cred"
+                        def properties = "buildid=${env.BUILD_ID},commitid=${GIT_COMMIT}";
+                        def uploadSpec = """{
+                            "files": [
+                                {
+                                "pattern": "jarstaging/(*)",
+                                "target": "rutvik-libs-release-local/{1}",
+                                "flat": "false",
+                                "props" : "${properties}",
+                                "exclusions": [ "*.sha1", "*.md5"]
+                                }
+                            ]
+                        }"""
+                        def buildInfo = server.upload(uploadSpec)
+                        buildInfo.env.collect()
+                        server.publishBuildInfo(buildInfo)
+                        echo '<--------------- Jar Publish Ended --------------->'  
+                }
+            }   
+        }
+
+
+
 
     }
 }
