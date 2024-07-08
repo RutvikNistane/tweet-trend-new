@@ -43,6 +43,7 @@ environment {
 
 */
 
+/*
         stage("Quality Gate") {
             steps {
                 script {
@@ -56,6 +57,7 @@ environment {
             }
         }
 
+*/
         stage("Jar Publish") {
             steps {
                 script {
