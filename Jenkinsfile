@@ -1,6 +1,6 @@
 def registry =  'https://rutviknistane123.jfrog.io/'
 def imageName = 'rutviknistane123.jfrog.io/valaxy-docker-local/ttrend'
-def version = '2.1.3'
+def version = '2.1.2'
 
 pipeline {
     agent {
@@ -112,7 +112,9 @@ pipeline {
         stage("Deploy") {
             steps {
                 script {
-                    sh './deploy.sh'
+                    echo '<-------------Helm Deploy Started-------------->'
+                    sh 'helm install ttrend ttrend-0.1.0.tgz'
+                    echo '<-------------Helm Deploy Ends----------------->'
                 }
             }
         }
